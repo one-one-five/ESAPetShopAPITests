@@ -19,9 +19,9 @@ class TestPet:
     def test_update_nonexistent_pet(self):
         with allure.step('Отправка запроса на обновление несуществующего питомца'):
             body = {
-                "id": 9999,
-                "name": "Non-existent Pet",
-                "status": "available"}
+                "id": 9999
+                , "name": "Non-existent Pet"
+                , "status": "available"}
             response = httpx.put(url=f'{BASE_URL}/pet', json=body)
 
         with allure.step('Проверка статуса ответа'):
