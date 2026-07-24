@@ -208,4 +208,5 @@ __marimo__/
 .pytype/
 .dmypy.json
 dmypy.json
-cython_debug/
+cython_debug/Jenkins
+first_test.pdf
