@@ -61,7 +61,7 @@ class TestPet:
         }
         response = httpx.post(url=f'{BASE_URL}/pet', json=body)
 
-        with allure.step('Отправка запроса на получение информации о несуществующем питомце'):
+        with allure.step('Отправка запроса на создание питомца'):
             with allure.step('Проверка статуса ответа'):
                 assert response.status_code == 200, 'Код ответа не совпал с ожидаемым'
 
