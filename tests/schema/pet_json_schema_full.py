@@ -1,4 +1,4 @@
-PET_JSON = {
+PET_JSON_FULL = {
     "type": "object",
     "properties": {
         "id": {
