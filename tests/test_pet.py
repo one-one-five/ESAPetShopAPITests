@@ -1,7 +1,6 @@
 import allure
 import httpx
 from jsonschema import validate
-from .schema.pet_json_schema_full import PET_JSON_FULL
 from .schema.pet_json_schema import PET_JSON
 
 BASE_URL = 'http://5.181.109.28:9090/api/v3'
@@ -87,10 +86,8 @@ class TestPet:
             with allure.step('Проверка статуса ответа'):
                 assert response.status_code == 200, 'Код ответа не совпал с ожидаемым'
 
-            response_json = response.json()
-
             with allure.step('Валидация JSON схемы'):
-                validate(response_json, PET_JSON_FULL)
+                validate(response_json, PET_JSON)
 
             with allure.step('Проверка полей ответа'):
                 assert response_json == body

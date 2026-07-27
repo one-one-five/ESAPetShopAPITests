@@ -61,6 +61,7 @@ PET_JSON = {
         "id",
         "name",
         "photoUrls",
+        "tags",
         "status"
     ],
     "additionalProperties": False
