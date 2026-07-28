@@ -164,6 +164,7 @@ class TestPet:
         with allure.step(f'Отправка запроса на получение питомца по статусу {status}'):
             response = httpx.get(url=f'{BASE_URL}/pet/findByStatus', params=params)
 
+
         with allure.step('Проверка статуса ответа'):
             assert response.status_code == expected_status_code, \
                 f'Код ответа {response.status_code} не соответствует ожидаемому {expected_status_code}'
