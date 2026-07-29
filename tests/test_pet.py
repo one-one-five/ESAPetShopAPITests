@@ -174,14 +174,14 @@ class TestPet:
                 assert expected_error in response.text, \
                     f'Текст ошибки {expected_error}, отличается от ожидаемого {response.text[:100]})'
 
-            if expected_status_code == 200:
-                content = response.json()
+        if expected_status_code == 200:
+            content = response.json()
 
-                with allure.step('Проверка, что тело ответа — список'):
-                    assert isinstance(content, list), f'в ответе {type(content)}'
+            with allure.step('Проверка, что тело ответа — список'):
+                assert isinstance(content, list), f'в ответе {type(content)}'
 
-                with allure.step('Проверим что список в ответе не пустой'):
-                    assert len(content) > 0, 'Список пустой'
+            with allure.step('Проверим что список в ответе не пустой'):
+                assert len(content) > 0, 'Список пустой'
 
-                with allure.step(f'Проверка, что список содержит переданный {status}'):
-                    assert all(pet['status'] == status for pet in content), 'в ответе есть питомцы с другим статусом'
+            with allure.step(f'Проверка, что список содержит переданный {status}'):
+                assert all(pet['status'] == status for pet in content), 'в ответе есть питомцы с другим статусом'
