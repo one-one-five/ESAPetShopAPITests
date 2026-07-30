@@ -72,9 +72,3 @@ class TestStore:
 
         with allure.step('Валидация JSON'):
             validate(response.json(),STORE_JSON), 'Тип ответа не словарь'
-
-        # with allure.step('Проверка, что тело ответа — словарь'):
-        #     assert isinstance(response_json, dict), '
-        #     for key, value in response_json.items():
-        #         assert isinstance(key, str), 'Тип ключа не строка'
-        #         assert isinstance(value, int), 'Тип значения не число'
