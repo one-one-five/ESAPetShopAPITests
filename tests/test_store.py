@@ -5,7 +5,7 @@ from random import randint
 from jsonschema import validate
 from .schema.store_json_schema import STORE_JSON
 
-from conftest import BASE_URL_store
+from .conftest import BASE_URL_store
 
 
 @allure.feature('Store')
