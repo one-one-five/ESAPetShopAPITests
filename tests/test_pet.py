@@ -2,6 +2,7 @@ import allure
 import httpx
 from jsonschema import validate
 from .schema.pet_json_schema import PET_JSON
+import pytest
 
 BASE_URL = 'http://5.181.109.28:9090/api/v3'
 
@@ -147,3 +148,40 @@ class TestPet:
 
         with allure.step('Проверка статуса ответа'):
             assert response.status_code == 404, 'Код ответа не совпал с ожидаемым'
+
+    @allure.title('Получение списка питомцев по статусу {status}')
+    @pytest.mark.parametrize(
+        'status, expected_status_code, expected_error',
+        [
+            ('', 400, 'No status provided. Try again?'),
+            ('available', 200, None),
+            ('pending', 200, None),
+            ('sold', 200, None),
+            ('non_existent_status', 400, 'query parameter')
+        ]
+    )
+    def test_get_by_status(self, status, expected_status_code, expected_error):
+        params = {'status': status} if status else None
+        with allure.step(f'Отправка запроса на получение питомца по статусу {status}'):
+            response = httpx.get(url=f'{BASE_URL}/pet/findByStatus', params=params)
+
+        with allure.step('Проверка статуса ответа'):
+            assert response.status_code == expected_status_code, \
+                f'Код ответа {response.status_code} не соответствует ожидаемому {expected_status_code}'
+
+        if expected_status_code == 400:
+            with allure.step('Проверим текст ошибки'):
+                assert expected_error in response.text, \
+                    f'Текст ошибки {expected_error}, отличается от ожидаемого {response.text[:100]})'
+
+        if expected_status_code == 200:
+            content = response.json()
+
+            with allure.step('Проверка, что тело ответа — список'):
+                assert isinstance(content, list), f'в ответе {type(content)}'
+
+            with allure.step('Проверим что список в ответе не пустой'):
+                assert len(content) > 0, 'Список пустой'
+
+            with allure.step(f'Проверка, что список содержит переданный {status}'):
+                assert all(pet['status'] == status for pet in content), 'в ответе есть питомцы с другим статусом'
