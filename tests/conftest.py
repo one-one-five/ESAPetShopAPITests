@@ -37,5 +37,36 @@ def create_order():
 
     with allure.step('Проверка статусу'):
         assert response.status_code == 200, 'Код ответа не совпадает с ожидаемым'
-
     return body, response.json()
+
+
+@pytest.fixture()
+def create_order_and_delete():
+    '''Фикстура создания и удаления заказа'''
+
+    body = {
+        "id": randint(100, 999),
+        "petId": randint(100, 999),
+        "quantity": randint(100, 999),
+        "status": "placed",
+        "complete": True
+    }
+    with allure.step('Отправка запроса на размещение заказа'):
+        response = httpx.post(f'{BASE_URL_store}/order', json=body)
+
+    with allure.step('Проверка статусу'):
+        assert response.status_code == 200, 'Код ответа не совпадает с ожидаемым'
+    order_id = body['id']
+    yield body, response.json()
+
+    with allure.step(f'Отправляем запрос на удаление заказа по ID {order_id}'):
+        response = httpx.delete(f'{BASE_URL_store}/order/{order_id}')
+
+    with allure.step('Проверяем статус ответа'):
+        assert response.status_code == 200, 'Код ответа не совпадает с ожидаемым'
+
+    with allure.step('Отправка запроса с удаленным ID заказа'):
+        response = httpx.get(f'{BASE_URL_store}/order/{order_id}')
+
+    with allure.step('Проверяем статус ответа с удаленным заказом'):
+        assert response.status_code == 404, 'Код ответа не совпадает с ожидаемым'

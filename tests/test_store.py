@@ -11,17 +11,17 @@ from .conftest import BASE_URL_store
 @allure.feature('Store')
 class TestStore:
     @allure.title('Размещение заказа (#42)')
-    def test_placing_an_order(self, create_order):
-        body, response_json_post = create_order
+    def test_placing_an_order(self, create_order_and_delete):
+        body, response_json_post = create_order_and_delete
 
         with allure.step('Проверка, что ответ содержит переданные данные'):
             for key in body.keys():
                 assert response_json_post[key] == body[key], f'Переданное значение {key} не совпадает с ответом'
 
     @allure.title('Получение информации о заказе по ID (#43)')
-    def test_get_order_by_id(self, create_order):
+    def test_get_order_by_id(self, create_order_and_delete):
         with allure.step('Получаем ID заказа'):
-            body, response_json = create_order
+            body, response_json = create_order_and_delete
             order_id = response_json['id']
 
         with allure.step(f'Получаем информацию о заказе с ID {order_id}'):
@@ -50,7 +50,7 @@ class TestStore:
         with allure.step('Отправка запроса с удаленным ID заказа'):
             response = httpx.get(f'{BASE_URL_store}/order/{order_id}')
 
-        with allure.step('Проверяем статус ответа'):
+        with allure.step('Проверяем статус ответа с удаленным заказом'):
             assert response.status_code == 404, 'Код ответа не совпадает с ожидаемым'
 
     @allure.title('Попытка получить информацию о несуществующем заказе (#45)')
@@ -71,4 +71,4 @@ class TestStore:
             assert response.status_code == 200, 'Код ответа не совпадает с ожидаемым'
 
         with allure.step('Валидация JSON'):
-            validate(response.json(),STORE_JSON), 'Тип ответа не словарь'
+            validate(response_json, STORE_JSON)
