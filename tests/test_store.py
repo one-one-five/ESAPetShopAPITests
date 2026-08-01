@@ -3,7 +3,7 @@ import httpx
 import pytest
 from random import randint
 from jsonschema import validate
-from .schema.store_json_schema import STORE_JSON
+from .schema.store_json_schema import STORE_JSON, ORDER_JSON
 
 from .conftest import BASE_URL_store
 
@@ -11,12 +11,27 @@ from .conftest import BASE_URL_store
 @allure.feature('Store')
 class TestStore:
     @allure.title('Размещение заказа (#42)')
-    def test_placing_an_order(self, create_order_and_delete):
-        body, response_json_post = create_order_and_delete
+    def test_placing_an_order(self):
+        body = {
+            "id": randint(100, 999),
+            "petId": randint(100, 999),
+            "quantity": randint(100, 999),
+            "status": "placed",
+            "complete": True
+        }
+        with allure.step('Отправка запроса на размещение заказа'):
+            response = httpx.post(f'{BASE_URL_store}/order', json=body)
+
+        with allure.step('Проверка статусу'):
+            assert response.status_code == 200, 'Код ответа не совпадает с ожидаемым'
+            response_json = response.json()
+
+        with allure.step('Валидация JSON'):
+            validate(response.json(), ORDER_JSON)
 
         with allure.step('Проверка, что ответ содержит переданные данные'):
             for key in body.keys():
-                assert response_json_post[key] == body[key], f'Переданное значение {key} не совпадает с ответом'
+                assert response_json[key] == body[key], f'Переданное значение {key} не совпадает с ответом'
 
     @allure.title('Получение информации о заказе по ID (#43)')
     def test_get_order_by_id(self, create_order_and_delete):
